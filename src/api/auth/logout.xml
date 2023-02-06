@@ -1,0 +1,31 @@
+<!--
+    // ====================================================================================================
+    // Removes cookie from browser and redirects to return-uri.
+    // Values in {{value}} syntax are defined as Named Values in APIM instance.
+    // ====================================================================================================
+-->
+<policies>
+	<inbound>
+		<base />
+	</inbound>
+	<backend />
+	<outbound>
+		<return-response>
+			<set-status code="302" reason="Temporary Redirect" />
+			<set-header name="Set-Cookie" exists-action="override">
+				<value>@($"{{cookie-name}}=; Secure; SameSite=Strict; Path=/; HttpOnly; Domain={{cookie-domain}}; Expires=Thurs, 01 Jan 1970 00:00:00 GMT")</value>
+			</set-header>
+			<set-header name="Location" exists-action="override">
+				<value>{{return-uri}}</value>
+			</set-header>
+		</return-response>
+		<!-- 
+		    // ====================================================================================================
+            // Do not call base as we have no need to call external endpoint.
+    		// ====================================================================================================
+         -->
+	</outbound>
+	<on-error>
+		<base />
+	</on-error>
+</policies>

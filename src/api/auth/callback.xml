@@ -1,0 +1,78 @@
+<!--
+    // ====================================================================================================
+    // Handle Auth Code request callback to exchange auth code for access token and set in encrypted cookie
+    // Values in {{value}} syntax are defined as Named Values in APIM instance.
+    // ====================================================================================================
+-->
+<policies>
+    <inbound>
+        <base />
+        <!-- 
+            // ====================================================================================================
+            // Call the token server to exchange the auth code for an access token.
+            // ====================================================================================================
+         -->
+        <send-request ignore-error="false" timeout="20" response-variable-name="serverResponse" mode="new">
+            <set-url>https://login.microsoftonline.com/organizations/oauth2/v2.0/token</set-url>
+            <set-method>POST</set-method>
+            <set-header name="Content-Type" exists-action="override">
+                <value>application/x-www-form-urlencoded</value>
+            </set-header>
+            <set-body>@(string.Format("grant_type=authorization_code&code={0}&client_id={1}&client_secret={2}&redirect_uri=https://{3}/auth/callback",
+                            context.Request.OriginalUrl.Query.GetValueOrDefault("code"),
+                            "{{client-id}}",
+                            "{{client-secret}}",
+                            context.Request.OriginalUrl.Host))
+            </set-body>
+        </send-request>
+        <!-- 
+            // ====================================================================================================
+            // Extract the access token from the token server response.
+            // ====================================================================================================
+         -->
+        <set-variable name="token" value="@((context.Variables.GetValueOrDefault<IResponse>("serverResponse")).Body.As<JObject>())" />
+        <set-variable name="jwt" value="@((string)(context.Variables.GetValueOrDefault<JObject>("token"))["access_token"])" />
+    </inbound>
+    <backend />
+    <outbound>
+        <!-- 
+            // ====================================================================================================
+            // Generate a random IV to encrypt the access token and set it into a variable.
+            // ====================================================================================================
+         -->
+        <set-variable name="cookieContent" value="@{
+            var rng = new RNGCryptoServiceProvider();
+            var iv = new byte[16];
+            rng.GetBytes(iv);
+            byte[] jwtBytes = Encoding.UTF8.GetBytes(context.Variables.GetValueOrDefault<string>("jwt"));
+            byte[] encryptedToken = jwtBytes.Encrypt("Aes", Convert.FromBase64String("{{enc-key}}"), iv);
+            byte[] combinedContent = new byte[iv.Length + encryptedToken.Length];
+            Array.Copy(iv, 0, combinedContent, 0, iv.Length);
+            Array.Copy(encryptedToken, 0, combinedContent, iv.Length, encryptedToken.Length);
+            return Convert.ToBase64String(combinedContent);
+        }" />
+        <!-- 
+            // ====================================================================================================
+            // Create a return response to redirect back to the calling application.
+            // Set the encrypted access token into a cookie.
+            // ====================================================================================================
+         -->
+        <return-response>
+            <set-status code="302" reason="Temporary Redirect" />
+            <set-header name="Set-Cookie" exists-action="override">
+                <value>@($"{{cookie-name}}={context.Variables.GetValueOrDefault<string>("cookieContent")}; Secure; SameSite=Strict; Path=/; Domain={{cookie-domain}}; HttpOnly")</value>
+            </set-header>
+            <set-header name="Location" exists-action="override">
+                <value>{{return-uri}}</value>
+            </set-header>
+        </return-response>
+        <!-- 
+            // ====================================================================================================
+            // Do not call base as we have no need to call external endpoint.
+            // ====================================================================================================
+         -->
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
