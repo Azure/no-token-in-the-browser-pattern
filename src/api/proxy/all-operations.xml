@@ -29,10 +29,7 @@
             // 4. Decode the cookie content from base64url to base64.
             // 5. Decode the base64 cookie content to bytes.
             // 6. Extract the IV from the encrypted cookie content.
-            // 7. Decrypt the encrypted bytes into a string and set it in a variable.
-            //
-            // OPTIONAL: Once the access token has been decrypted, it could be validated to ensure it is still
-            // valid and has not expired. This sample does not include this step.
+            // 7. Decrypt the encrypted cookie content into a variable.
             // ====================================================================================================
          -->
         <set-variable name="access_token" value="@{
@@ -44,18 +41,7 @@
                                             .Where(p => p.Contains("{{cookie-name}}"))
                                             .FirstOrDefault()
                                             .Replace("{{cookie-name}}=", "");
-                string decodedContent = cookieContent.Replace('_', '/').Replace('-', '+');
-                switch(cookieContent.Length % 4) {
-                    case 2:
-                        decodedContent += "==";
-                        break;
-                    case 3:
-                        decodedContent += "=";
-                        break;
-                    default:
-                        break;
-                }
-                byte[] encryptedBytes = Convert.FromBase64String(decodedContent);
+                byte[] encryptedBytes = Convert.FromBase64String(System.Net.WebUtility.UrlDecode(cookieContent));
                 byte[] iv = new byte[16];
                 byte[] tokenBytes = new byte[encryptedBytes.Length - 16];
                 Array.Copy(encryptedBytes, 0, iv, 0, 16);
@@ -69,9 +55,7 @@
         }" />
         <!-- 
             // ====================================================================================================
-            // Set the decrypted access token as an Authorization header to call the downstream API.
-            // If the access token has expired then a 401 response will be returned. This sample does not include
-            // the use of a refresh token to silently obtain a new access token but could be extended to do so.
+            // Set the decrypted access token as an Authorization header.
             // ====================================================================================================
          -->
         <choose>

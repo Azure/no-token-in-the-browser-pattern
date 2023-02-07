@@ -25,8 +25,7 @@
                             context.Request.OriginalUrl.Query.GetValueOrDefault("code"),
                             "{{client-id}}",
                             "{{client-secret}}",
-                            context.Request.OriginalUrl.Host))
-            </set-body>
+                            context.Request.OriginalUrl.Host))</set-body>
         </send-request>
         <!-- 
             // ====================================================================================================
@@ -57,7 +56,7 @@
             byte[] combinedContent = new byte[iv.Length + encryptedToken.Length];
             Array.Copy(iv, 0, combinedContent, 0, iv.Length);
             Array.Copy(encryptedToken, 0, combinedContent, iv.Length, encryptedToken.Length);
-            return Convert.ToBase64String(combinedContent).TrimEnd(new char[] { '=' }).Replace('+', '-').Replace('/', '_');
+            return System.Net.WebUtility.UrlEncode(Convert.ToBase64String(combinedContent));
         }" />
         <!-- 
             // ====================================================================================================
