@@ -10,10 +10,13 @@
         <!-- 
             // ====================================================================================================
             // Call the token server to exchange the auth code for an access token.
+            // This request will return a JSON object with the access token. No refresh token will be returned
+            // as it was not requested in the original scope request. To request a refresh token, add the
+            // "offline_access" scope to the original request.
             // ====================================================================================================
          -->
         <send-request ignore-error="false" timeout="20" response-variable-name="serverResponse" mode="new">
-            <set-url>https://login.microsoftonline.com/organizations/oauth2/v2.0/token</set-url>
+            <set-url>https://login.microsoftonline.com/{{tenant-id}}/oauth2/v2.0/token</set-url>
             <set-method>POST</set-method>
             <set-header name="Content-Type" exists-action="override">
                 <value>application/x-www-form-urlencoded</value>
@@ -28,6 +31,8 @@
         <!-- 
             // ====================================================================================================
             // Extract the access token from the token server response.
+            // This sample does not request a refresh token. If a refresh token is requested, it will be returned
+            // in the response together with the access_token and should be extracted separately.
             // ====================================================================================================
          -->
         <set-variable name="token" value="@((context.Variables.GetValueOrDefault<IResponse>("serverResponse")).Body.As<JObject>())" />
@@ -37,7 +42,10 @@
     <outbound>
         <!-- 
             // ====================================================================================================
-            // Generate a random IV to encrypt the access token and set it into a variable.
+            // Generate a random IV to encrypt the access token and set it into a variable. This ensures that the
+            // encrypted content is different each time a token in encrypted.
+            // This sample uses AES encryption with key is stored in a Named Value in APIM. Any encryption key
+            // should be rotated regularly to ensure the security of the encryption.
             // ====================================================================================================
          -->
         <set-variable name="cookieContent" value="@{
@@ -49,12 +57,12 @@
             byte[] combinedContent = new byte[iv.Length + encryptedToken.Length];
             Array.Copy(iv, 0, combinedContent, 0, iv.Length);
             Array.Copy(encryptedToken, 0, combinedContent, iv.Length, encryptedToken.Length);
-            return Convert.ToBase64String(combinedContent);
+            return Convert.ToBase64String(combinedContent).TrimEnd(new char[] { '=' }).Replace('+', '-').Replace('/', '_');
         }" />
         <!-- 
             // ====================================================================================================
             // Create a return response to redirect back to the calling application.
-            // Set the encrypted access token into a cookie.
+            // Set the encrypted and base64url encoded access token into a cookie.
             // ====================================================================================================
          -->
         <return-response>

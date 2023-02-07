@@ -1,6 +1,10 @@
-# Resource Configuration
+# Setup
 
-The sections below detail how to configure the resources required to implement this example. This project uses the domain `codeshed.dev` throughout, with the single-page application hosted at `spa.codeshed.dev` and the API Management gateway registered as `api.codeshed.dev`. These values will need to be replaced with your own domain and subdomain names as appropriate. A working version of the example can be found at [https://spa.codeshed.dev](https://spa.codeshed.dev).
+The sections below detail how to configure the resources required to implement this example. This project uses the domain `codeshed.dev` throughout, with the single-page application hosted at `spa.codeshed.dev` and the API Management gateway registered as `api.codeshed.dev`. These values will need to be replaced with your own domain and subdomain names as appropriate.
+
+## Prerequisites
+
+TBD
 
 ## Application Registration
 
@@ -11,7 +15,7 @@ You will need to register an application in Azure Active Directory to generate a
 - API Permissions
 - Client Secret
 
-When creating the application registration the sign in audience chosen will determine the Azure Active Directory endpoints required for authorization and token acquisition. This example project uses a multi-tenant application registration, which allows for users of multiple directories to access it. If single tenant is chosen then the tenant id would need to be used in these endpoints in place of the generic `organizations` used for multi-tenanted applications.
+When creating the application registration the sign in audience chosen will determine the Azure Active Directory endpoints required for authorization and token acquisition. This example project uses a single tenant application registration, which only allows for users from a single directory to access it. If a multi-tenant application is used then the tenant id should be replaced with the appropriate alternative common setting.
 
 Even though this example is a single-page application, due to the backend for frontend pattern, the OAuth2 application is considered a confidential client as token acquisition is handled by the API Management gateway, which can keep the client secret value secure either as a secret named value, or by linking it to a secret in a Key Vault.
 
@@ -27,6 +31,8 @@ Finally a client secret is required to be generated for the API Management gatew
 
 Once the API Management gateway has been created several parameters need to be registered under [Named Values](https://learn.microsoft.com/en-us/azure/api-management/api-management-howto-properties) to be referenced by the policies. Theses values are:
 
+- `tenant-id`
+  - The Azure Active Directory tenant id.
 - `client-id`
   - The application registration client id.
 - `client-secret`
