@@ -59,10 +59,16 @@
             return System.Net.WebUtility.UrlEncode(Convert.ToBase64String(combinedContent));
         }" />
         <!-- 
-            // ====================================================================================================
+            // ========================================================================================================
             // Create a return response to redirect back to the calling application.
             // Set the encrypted and base64url encoded access token into a cookie.
-            // ====================================================================================================
+            // Cookies are created as session cookies by default. If you are not implementing a refresh token
+            // to the pattern then it setting the expiry of the cookie to match that of the access token could
+            // be considered. This would ensure that the cookie is removed when the access token expires.
+            //
+            // Details on configurable token lifetimes can be found here:
+            // https://learn.microsoft.com/azure/active-directory/develop/active-directory-configurable-token-lifetimes
+            // ========================================================================================================
          -->
         <return-response>
             <set-status code="302" reason="Temporary Redirect" />
