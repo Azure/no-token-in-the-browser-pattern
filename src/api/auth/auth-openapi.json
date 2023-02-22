@@ -2,11 +2,11 @@
     "openapi": "3.0.1",
     "info": {
         "title": "auth",
-        "description": "",
+        "description": "A simple API to authenticate users with OAuth2 and OpenID Connect",
         "version": "1.0"
     },
     "servers": [{
-        "url": "https://api.codeshed.dev/auth"
+        "url": ""
     }],
     "paths": {
         "/callback": {
@@ -41,23 +41,6 @@
             }
         }
     },
-    "components": {
-        "securitySchemes": {
-            "apiKeyHeader": {
-                "type": "apiKey",
-                "name": "Ocp-Apim-Subscription-Key",
-                "in": "header"
-            },
-            "apiKeyQuery": {
-                "type": "apiKey",
-                "name": "subscription-key",
-                "in": "query"
-            }
-        }
-    },
-    "security": [{
-        "apiKeyHeader": []
-    }, {
-        "apiKeyQuery": []
-    }]
+    "components": {},
+    "security": []
 }

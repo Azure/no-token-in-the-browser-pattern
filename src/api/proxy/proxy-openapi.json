@@ -1,0 +1,26 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "graph",
+        "description": "A simple API to proxy requests to the Microsoft Graph API.",
+        "version": "1.0"
+    },
+    "servers": [{
+        "url": "https://graph.microsoft.com/v1.0"
+    }],
+    "paths": {
+        "/me": {
+            "get": {
+                "summary": "me",
+                "operationId": "me",
+                "responses": {
+                    "200": {
+                        "description": null
+                    }
+                }
+            }
+        }
+    },
+    "components": {},
+    "security": []
+}
