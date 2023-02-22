@@ -6,7 +6,7 @@ As this example uses `SameSite=Strict` cookies, the domain of the API Management
 
 It is possible to configure this example without using custom domains for the API Management instance and Static Web App, but the policy applied to the `callback` API method would need to be amended to `SameSite=None` and the `return-uri` named value would need to be set to the domain of the Static Web App. This, however, provides a less secure implementation as the cookie will be sent to the API Management gateway on every request, even if the user is not authenticated. More on SameSite cookies can be read [here](https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite).
 
-To learn more about managing DNS records for custom domains, see [Manage custom domains for Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/custom-domain), and [Configure a custom domain name for your Azure API Management instance](https://learn.microsoft.com/azure/api-management/configure-custom-domain). For more information on how to configure DNS records for custom domains, see [How to manage DNS Zones in the Azure portal](https://learn.microsoft.com/azure/dns/dns-operations-dnszones-portal).
+To learn more about managing DNS records for custom domains, see [Manage custom domains for Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/custom-domain), and [Configure a custom domain name for your Azure API Management instance](https://learn.microsoft.com/azure/api-management/configure-custom-domain). For more information on how to configure DNS records for custom domains, see [How to manage DNS Zones in the Azure portal](https://learn.microsoft.com/azure/dns/dns-operations-dnszones-portal).
 
 ## Prerequisites
 
@@ -14,16 +14,16 @@ This example requires the following to be created in your **Azure AD tenant**.
 
 - **Azure Active Directory Application Registration**
   - A client application registration is used to generate the client id and client secret required for the API Management gateway to acquire an access token.
-  - **Quickstart:** [Register an application with the Microsoft identity platform](https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+  - **Quickstart:** [Register an application with the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
 
 This example requires the following resources to be created in your **Azure subscription**, within a single resource group.
 
 - **Azure API Management service**
   - This is used to host the API definitions and policies required to implement the authorization flow and logout functionalitym as well as proxy the API requests to the backend service.
-  - **Quickstart:** [Create a new Azure API Management service instance by using the Azure portal](https://docs.microsoft.com/azure/api-management/get-started-create-service-instance).
+  - **Quickstart:** [Create a new Azure API Management service instance by using the Azure portal](https://learn.microsoft.com/azure/api-management/get-started-create-service-instance).
 - **Azure Static Web App**
   - This is used to host the single-page application. When configuring the static web app select a GitHub repository with the SPA sample code as a deployment source.
-  - **Quickstart:** [Building your first static site with Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/getting-started).
+  - **Quickstart:** [Building your first static site with Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/getting-started).
 - **Azure Key Vault** _(optional)_
   - This can optionally be used to store the client secret generated in the application registration and other secret values.
   - **Quickstart:** [Create a Key Vault using the Azure portal](https://learn.microsoft.com/azure/key-vault/general/quick-create-portal).
