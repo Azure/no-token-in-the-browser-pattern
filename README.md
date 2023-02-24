@@ -1,6 +1,6 @@
 # No Token in the Browser Pattern using Azure API Management
 
-This project is an example of how you can use Azure API Management to implement a no token in the browser pattern for a JavaScript single-page application.  This implementation is described in detail on Microsoft Learn, see [Protect access tokens in a single-page application using Azure API Management](https://learn.microsoft.com/azure/architecture/solution-ideas/articles/no-token-in-the-browser).
+This project is an example of how you can use Azure API Management to implement a no token in the browser pattern for a JavaScript single-page application.  This implementation is described in detail on Microsoft Learn, see [Protect access tokens in a single-page application using Azure API Management](https://learn.microsoft.com/azure/architecture/guide/web/secure-single-page-application-authorization).
 
 This pattern uses [Azure API Management](https://azure.microsoft.com/products/api-management) in a [Backend for Frontend](https://learn.microsoft.com/azure/architecture/patterns/backends-for-frontends) pattern where it handles the OAuth2 access token acquisition from Azure Active Directory; [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) encryption and decryption of the access token into an `HttpOnly` cookie; and to proxy all API calls requiring authorization. This is performed by the use of [Azure API Management Policies](https://learn.microsoft.com/azure/api-management/api-management-howto-policies).
 
@@ -10,7 +10,7 @@ This example uses [Microsoft Graph API](https://learn.microsoft.com/graph/api/ov
 
 ## Deploy this example
 
-For information on how to deploy and configure the solution, please consult the [Deployment guide](docs/setup.md).
+For information on how to deploy and configure the solution, please consult the [Deployment guide](docs/deployment-guide.md).
 
 ## Overview
 
