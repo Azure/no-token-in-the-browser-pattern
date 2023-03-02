@@ -21,11 +21,7 @@
             <set-header name="Content-Type" exists-action="override">
                 <value>application/x-www-form-urlencoded</value>
             </set-header>
-            <set-body>@(string.Format("grant_type=authorization_code&code={0}&client_id={1}&client_secret={2}&redirect_uri=https://{3}/auth/callback",
-                            context.Request.OriginalUrl.Query.GetValueOrDefault("code"),
-                            "{{client-id}}",
-                            "{{client-secret}}",
-                            context.Request.OriginalUrl.Host))</set-body>
+            <set-body>@($"grant_type=authorization_code&code={context.Request.OriginalUrl.Query.GetValueOrDefault("code")}&client_id={{client-id}}&client_secret={{client-secret}}&redirect_uri=https://{context.Request.OriginalUrl.Host}/auth/callback")</set-body>
         </send-request>
         <!-- 
             // ====================================================================================================
@@ -34,7 +30,7 @@
             // in the response together with the access_token and should be extracted separately.
             // ====================================================================================================
          -->
-        <set-variable name="token" value="@((context.Variables.GetValueOrDefault<IResponse>("response")).Body.As<JObject>())" />
+        <set-variable name="token" value="@(context.Variables.GetValueOrDefault<IResponse>("response").Body.As<JObject>())" />
     </inbound>
     <backend />
     <outbound>
