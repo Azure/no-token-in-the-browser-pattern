@@ -15,7 +15,7 @@
             // "offline_access" scope to the original request.
             // ====================================================================================================
          -->
-        <send-request ignore-error="false" timeout="20" response-variable-name="serverResponse" mode="new">
+        <send-request ignore-error="false" timeout="20" response-variable-name="response" mode="new">
             <set-url>https://login.microsoftonline.com/{{tenant-id}}/oauth2/v2.0/token</set-url>
             <set-method>POST</set-method>
             <set-header name="Content-Type" exists-action="override">
@@ -34,7 +34,7 @@
             // in the response together with the access_token and should be extracted separately.
             // ====================================================================================================
          -->
-        <set-variable name="token" value="@((context.Variables.GetValueOrDefault<IResponse>("serverResponse")).Body.As<JObject>())" />
+        <set-variable name="token" value="@((context.Variables.GetValueOrDefault<IResponse>("response")).Body.As<JObject>())" />
     </inbound>
     <backend />
     <outbound>
@@ -46,12 +46,12 @@
             // should be rotated regularly to ensure the security of the encryption.
             // ====================================================================================================
          -->
-        <set-variable name="cookieContent" value="@{
+        <set-variable name="cookie" value="@{
             var rng = new RNGCryptoServiceProvider();
             var iv = new byte[16];
             rng.GetBytes(iv);
-            byte[] jwtBytes = Encoding.UTF8.GetBytes((string)(context.Variables.GetValueOrDefault<JObject>("token"))["access_token"]);
-            byte[] encryptedToken = jwtBytes.Encrypt("Aes", Convert.FromBase64String("{{enc-key}}"), iv);
+            byte[] tokenBytes = Encoding.UTF8.GetBytes((string)(context.Variables.GetValueOrDefault<JObject>("token"))["access_token"]);
+            byte[] encryptedToken = tokenBytes.Encrypt("Aes", Convert.FromBase64String("{{enc-key}}"), iv);
             byte[] combinedContent = new byte[iv.Length + encryptedToken.Length];
             Array.Copy(iv, 0, combinedContent, 0, iv.Length);
             Array.Copy(encryptedToken, 0, combinedContent, iv.Length, encryptedToken.Length);
@@ -72,7 +72,7 @@
         <return-response>
             <set-status code="302" reason="Temporary Redirect" />
             <set-header name="Set-Cookie" exists-action="override">
-                <value>@($"{{cookie-name}}={context.Variables.GetValueOrDefault<string>("cookieContent")}; Secure; SameSite=Strict; Path=/; Domain={{cookie-domain}}; HttpOnly")</value>
+                <value>@($"{{cookie-name}}={context.Variables.GetValueOrDefault<string>("cookie")}; Secure; SameSite=Strict; Path=/; Domain={{cookie-domain}}; HttpOnly")</value>
             </set-header>
             <set-header name="Location" exists-action="override">
                 <value>{{return-uri}}</value>
