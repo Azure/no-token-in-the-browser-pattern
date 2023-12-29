@@ -10,11 +10,11 @@ To learn more about using custom domains on Azure resources, see [Manage custom 
 
 ## Prerequisites
 
-This example requires the following to be created in your **Azure AD tenant**.
+This example requires the following to be created in your **Microsoft Entra ID tenant**.
 
-- **Azure Active Directory Application Registration**
+- **Microsoft Entra ID Application Registration**
   - A client application registration is used to generate the client id and client secret required for the API Management gateway to acquire an access token.
-  - **Quickstart:** [Register an application with the Microsoft identity platform](https://learn.microsoft.com/azure/active-directory/develop/quickstart-register-app).
+  - **Quickstart:** [Register an application with the Microsoft identity platform](https://learn.microsoft.com/entra/identity-platform/quickstart-register-app).
 
 This example requires the following resources to be created in your **Azure subscription**, within a single resource group.
 
@@ -37,30 +37,30 @@ Once registered, the application registration requires the following properties 
 - API permissions
 - Front-channel logout URL
 
-When creating the application registration, the sign in audience chosen will determine the Azure Active Directory endpoints required for authorization and token acquisition. This example project uses a single tenant application registration, which only allows users from a single directory to access it. If a multi-tenant application is used, then the tenant id should be replaced with the appropriate alternative common setting.
+When creating the application registration, the sign in audience chosen will determine the Microsoft Entra ID endpoints required for authorization and token acquisition. This example project uses a single tenant application registration, which only allows users from a single directory to access it. If a multi-tenant application is used, then the tenant id should be replaced with the appropriate alternative common setting.
 
 Even though this example is a single-page application, due to the backend for frontend pattern, the OAuth2 application is considered a confidential client as token acquisition is handled by the API Management gateway, which can keep the client secret value secure either as a secret named value, or by linking it to a secret in a Key Vault.
 
 The redirect URI should be configured as a **Web** redirect and pointed to the domain of the API Management gateway and the API callback operation, for example: `https://<APIM DOMAIN>/auth/callback`.
 
-To enable the single-page application to log out of the API Management gateway, the front channel logout URL should be configured to the domain of the Azure API Management gateway logout operation, for example: `https://<APIM DOMAIN>/auth/logout`. This will ensure that the cookie is removed from the browser when the user logs out of Azure Active Directory.
+To enable the single-page application to log out of the API Management gateway, the front channel logout URL should be configured to the domain of the Azure API Management gateway logout operation, for example: `https://<APIM DOMAIN>/auth/logout`. This will ensure that the cookie is removed from the browser when the user logs out of Microsoft Entra ID.
 
-![A screenshot of the Azure AD app registration redirects.](images/app-reg-redirect.png)
+![A screenshot of the Microsoft Entra ID app registration redirects.](images/app-reg-redirect.png)
 
 As this example uses Microsoft Graph API as the proxied API to call, we need to add the permission `User.Read` to the application. Depending upon how you create the application registration this will probably be added for you by default.
 
-![A screenshot of the Azure AD app registration API permissions.](images/app-reg-permissions.png)
+![A screenshot of the Microsoft Entra ID app registration API permissions.](images/app-reg-permissions.png)
 
 Finally, a client secret is required to be generated for the API Management gateway to enable the authorization code to be exchanged for an access token. This secret is not required in the single-page application, but will be stored as a named value in the API Management gateway.
 
-![A screenshot of the Azure AD app registration client secrets configuration.](images/app-reg-secret.png)
+![A screenshot of the Microsoft Entra ID app registration client secrets configuration.](images/app-reg-secret.png)
 
 ## API Management configuration
 
 Once the API Management gateway has been created several parameters need to be registered under [Named Values](https://learn.microsoft.com/azure/api-management/api-management-howto-properties) to be referenced by the policies. Theses values are:
 
 - `tenant-id`
-  - The Azure Active Directory tenant ID.
+  - The Microsoft Entra ID tenant ID.
 - `client-id`
   - The application registration client ID.
 - `client-secret`
@@ -94,7 +94,7 @@ After the API definition has been imported, you should disable the requirement f
 
 ![A screenshot of the API configuration for the auth endpoint with Subscription required unchecked.](images/import-auth-subscription.png)
 
-Once the API definitions have been imported, the API Management policies can be edited. Each of the API definitions has it's own policy. The `callback` policy acts as the redirect for the Azure Active Directory application, and receives the authorization code following user authentication. This policy then exchanges the code for an access token before encrypting it into a cookie and returning it to the single-page application. The `logout` policy simply removes the cookie from the browser.
+Once the API definitions have been imported, the API Management policies can be edited. Each of the API definitions has it's own policy. The `callback` policy acts as the redirect for the Microsoft Entra ID application, and receives the authorization code following user authentication. This policy then exchanges the code for an access token before encrypting it into a cookie and returning it to the single-page application. The `logout` policy simply removes the cookie from the browser.
 
 To edit a policy, first select the API method and then click on the **Policies** button in the portal.
 
@@ -133,7 +133,7 @@ The `site.js` file contains three values that need to be updated to match your c
 - `clientId`
   - The application registration client id.
 - `tenantId`
-  - The Azure Active Directory tenant id.
+  - The Microsoft Entra ID tenant id.
 
 ![A screenshot of the site.js file's configuration lines.](images/site-js-settings.png)
 
@@ -143,7 +143,7 @@ Once the static web app has been deployed, the single-page application can be ac
 
 ![A screenshot of the running application, sitting on the main view.](images/spa-signin.png)
 
-Clicking the **Sign In** button will redirect you to the Azure Active Directory login page. Once you have authenticated, you will be redirected back to the single-page application and a cookie will be set containing the access token.
+Clicking the **Sign In** button will redirect you to the Microsoft Entra ID login page. Once you have authenticated, you will be redirected back to the single-page application and a cookie will be set containing the access token.
 
 ![A screenshot of the browser dev tools showing the HttpOnly, Secure cookie named "token."](images/spa-cookie-token.png)
 
@@ -151,8 +151,8 @@ Clicking the **Call API** button will make a request to the Microsoft Graph API 
 
 ![A screenshot of the running application, showing the output of a Graph API call.](images/spa-api-call.png)
 
-Clicking the **Sign Out** button will sign the user out from Azure Active Directory and remove the cookie from the browser.
+Clicking the **Sign Out** button will sign the user out from Microsoft Entra ID and remove the cookie from the browser.
 
 ## Cleaning up
 
-To remove the resources created in this tutorial, delete the resource group created in the [Prerequisites](#prerequisites) section, and delete the application registration created the Azure Active Directory.
+To remove the resources created in this tutorial, delete the resource group created in the [Prerequisites](#prerequisites) section, and delete the application registration created the Microsoft Entra ID.

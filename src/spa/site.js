@@ -1,11 +1,11 @@
 // The base API Management URI
 const baseUri = "<REPLACE WITH YOUR API MANAGEMENT DOMAIN - e.g https://api.codeshed.dev>";
 
-// The Azure AD application registration client ID
-const clientId = "<REPLACE WITH YOUR AZURE AD APPLICATION ID>";
+// The Microsoft Entra ID application registration client ID
+const clientId = "<REPLACE WITH YOUR MICROSOFT ENTRA ID APPLICATION ID>";
 
-// The Azure AD tenant ID
-const tenantId = "<REPLACE WITH YOUR AZURE AD TENANT ID>";
+// The Microsoft Entra ID tenant ID
+const tenantId = "<REPLACE WITH YOUR MICROSOFT ENTRA ID TENANT ID>";
 
 // The scope for the access token request to call the Microsoft Graph API
 // If a refresh token is also required for the application, add "offline_access" to the scope
@@ -18,9 +18,9 @@ const login = () => {
         `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize?response_type=code&redirect_uri=${baseUri}/auth/callback&client_id=${clientId}&scope=${scope}`;
 };
 
-// Logs the user out of the application by redirecting to the logout endpoint of Azure AD which will in turn call the logout endpoint of the application to remove the cookie
-// This allows the user to be logged out of Azure AD and the single-page application itself by deleting the cookie
-// If you do not want to log the user out of Azure AD, you can remove the redirect to the logout endpoint of Azure AD and just call the logout endpoint of the application
+// Logs the user out of the application by redirecting to the logout endpoint of Microsoft Entra ID which will in turn call the logout endpoint of the application to remove the cookie
+// This allows the user to be logged out of Microsoft Entra ID and the single-page application itself by deleting the cookie
+// If you do not want to log the user out of Microsoft Entra ID, you can remove the redirect to the logout endpoint of Microsoft Entra ID and just call the logout endpoint of the application
 const logout = () => {
     window.location.href = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/logout?post_logout_redirect_uri=${baseUri}/auth/logout`;
 };

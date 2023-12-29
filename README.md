@@ -4,14 +4,14 @@ This project is an example of how you can use Azure API Management to implement 
 
 This architecture uses [API Management](https://azure.microsoft.com/products/api-management) to:
 
-- Implement a [Backends for Frontends](/azure/architecture/patterns/backends-for-frontends) pattern that gets an OAuth2 access token from Azure Active Directory (Azure AD).
+- Implement a [Backends for Frontends](/azure/architecture/patterns/backends-for-frontends) pattern that gets an OAuth2 access token from Microsoft Entra ID.
 - Use Advanced Encryption Standard [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) to encrypt and decrypt the access token.
 - Store the token in an `HttpOnly` cookie.
 - Proxy all API calls that require authorization.
 
 Because the backend handles token acquisition, no other code or library, like [MSAL.js](https://github.com/AzureAD/microsoft-authentication-library-for-js), is required in the single-page application. When you use this design, no tokens are stored in the browser session or local storage. Encrypting and storing the access token in an `HttpOnly` cookie helps to protect it from [XSS](https://owasp.org/www-community/attacks/xss/) attacks. Scoping it to the API domain and setting `SameSite` to `Strict` ensures that the cookie is automatically sent with all proxied API first-party requests.
 
-This example uses [Microsoft Graph API](https://learn.microsoft.com/graph/api/overview?view=graph-rest-1.0) as an example backend API, but the same principles apply to any backend API you want to call. To obtain an access token with the required scopes, the correct API permissions need to be added to the application registration in Azure Active Directory.
+This example uses [Microsoft Graph API](https://learn.microsoft.com/graph/api/overview?view=graph-rest-1.0) as an example backend API, but the same principles apply to any backend API you want to call. To obtain an access token with the required scopes, the correct API permissions need to be added to the application registration in Microsoft Entra ID.
 
 ## Deploy this example
 
@@ -24,10 +24,10 @@ For information on how to deploy and configure the solution, please consult the 
 The pattern works as follows:
 
 1. A user selects **Sign in** in the single-page application.
-2. The single-page application invokes Authorization Code flow via a redirect to the Azure AD authorization endpoint.
+2. The single-page application invokes Authorization Code flow via a redirect to the Microsoft Entra ID authorization endpoint.
 3. Users authenticate themselves.
 4. An Authorization Code flow response with an authorization code is redirected to the API Management callback endpoint.
-5. The API Management policy exchanges the authorization code for an access token by calling the Azure AD token endpoint.
+5. The API Management policy exchanges the authorization code for an access token by calling the Microsoft Entra ID token endpoint.
 6. The Azure API Management policy redirects to the application and places the encrypted access token in an `HttpOnly` cookie.
 7. The user invokes an external API call from the application via an API Management proxied endpoint.
 8. The API Management policy receives the API request, decrypts the cookie, and makes a downstream API call, adding the access token as an `Authorization` header.

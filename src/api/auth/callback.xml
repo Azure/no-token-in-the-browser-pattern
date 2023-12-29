@@ -62,7 +62,7 @@
             // be considered. This would ensure that the cookie is removed when the access token expires.
             //
             // Details on configurable token lifetimes can be found here:
-            // https://learn.microsoft.com/azure/active-directory/develop/active-directory-configurable-token-lifetimes
+            // https://learn.microsoft.com/entra/identity-platform/configurable-token-lifetimes
             // ========================================================================================================
          -->
         <return-response>
