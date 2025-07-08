@@ -6,7 +6,7 @@ As this example uses `SameSite=Strict` cookies, the domain of the API Management
 
 > Note: It is possible to configure this example without using custom domains for the API Management instance and Static Web App, but the policy applied to the `callback` API method would need to be amended to `SameSite=None` and the `return-uri` named value would need to be set to the domain of the Static Web App. This, however, provides a less secure implementation as the cookie will be sent to any instance of API Management gateway and not constrained to your own domain. More on SameSite cookies can be read [here](https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite).
 
-To learn more about using custom domains on Azure resources, see [Manage custom domains for Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/custom-domain), and [Configure a custom domain name for your Azure API Management instance](https://learn.microsoft.com/azure/api-management/configure-custom-domain). For more information on how to configure DNS records for custom domains, see [How to manage DNS Zones in the Azure portal](https://learn.microsoft.com/azure/dns/dns-operations-dnszones-portal).
+To learn more about using custom domains on Azure resources, see [Map a custom domain to an Azure Blob Storage endpoint](/azure/storage/blobs/storage-custom-domain-name), and [Configure a custom domain name for your Azure API Management instance](https://learn.microsoft.com/azure/api-management/configure-custom-domain). For more information on how to configure DNS records for custom domains, see [How to manage DNS Zones in the Azure portal](https://learn.microsoft.com/azure/dns/dns-operations-dnszones-portal).
 
 ## Prerequisites
 
@@ -21,9 +21,9 @@ This example requires the following resources to be created in your **Azure subs
 - **Azure API Management service**
   - This is used to host the API definitions and policies required to implement the authorization flow and logout functionalitym as well as proxy the API requests to the backend service.
   - **Quickstart:** [Create a new Azure API Management service instance by using the Azure portal](https://learn.microsoft.com/azure/api-management/get-started-create-service-instance).
-- **Azure Static Web App**
-  - This is used to host the single-page application. When configuring the static web app select a GitHub repository with the SPA sample code as a deployment source.
-  - **Quickstart:** [Building your first static site with Azure Static Web Apps](https://learn.microsoft.com/azure/static-web-apps/getting-started).
+- **Static Website Hosting in Azure Storage**
+  - This is used to host the single-page application in an Azure Storage account.
+  - **Quickstart:** [Static Website Hosting in Azure Storage](/azure/storage/blobs/storage-blob-static-website).
 - **Azure Key Vault** _(optional)_
   - This can optionally be used to store the client secret generated in the application registration and other secret values.
   - **Quickstart:** [Create a Key Vault using the Azure portal](https://learn.microsoft.com/azure/key-vault/general/quick-create-portal).
@@ -122,9 +122,9 @@ Open the all operations policy file and copy the contents into the policy editor
 
 > Note: If you are a user of Visual Studio Code, API Management policies can be edited using the [Azure API Management extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-apimanagement). This extension also provides syntax highlighting and validation of the policy XML.
 
-## Static Web App configuration
+## Static Website Hosting
 
-To test the deployment of the APIs, the single-page application should be deployed to a static web app. Copy the two single-page files from the [src/spa](/src/spa) directory into a new GitHub repository and deploy it to a static web app. The static web app should be configured to use the `index.html` file as the default document.
+To test the API deployment, the single-page application (SPA) should be hosted using Azure Blob Storage configured for static website hosting. Upload the two SPA files located in the [src/spa](/src/spa) directory to the designated blob container.
 
 The `site.js` file contains three values that need to be updated to match your configuration:
 
@@ -139,7 +139,7 @@ The `site.js` file contains three values that need to be updated to match your c
 
 ## Try it out
 
-Once the static web app has been deployed, the single-page application can be accessed from the custom URL assigned by you. You will be presented with a simple interface with three buttons:
+Once deployed, the single-page application can be accessed from the custom URL assigned by you. You will be presented with a simple interface with three buttons:
 
 ![A screenshot of the running application, sitting on the main view.](images/spa-signin.png)
 
